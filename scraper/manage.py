@@ -7,7 +7,7 @@ from tests import TestCommand
 manager = Manager(create_app())
 
 manager.add_command('db', MigrateCommand)
-manager.add_command('runtests', TestCommand)
+manager.add_command('test', TestCommand)
 
 if __name__ == '__main__':
     manager.run()
