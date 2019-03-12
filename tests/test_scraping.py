@@ -1,11 +1,11 @@
 import unittest
 
-import utils.scrap as scrap
+from scraper.utils import scrap as scrap
 
 
 class TestScraping(unittest.TestCase):
     def test_get_content_without_http_in_url(self):
-        url = 'www.google.com'
+        url = 'www.test.com'
         self.assertTrue(isinstance(scrap.get_page_content(url), bytes))
 
     def test_get_page_text_from_page(self):
@@ -27,13 +27,13 @@ class TestScraping(unittest.TestCase):
         self.assertEqual(scrap.get_text_from_page(page_content), page_text)
 
     def test_get_images_relative_urls_from_page(self):
-        page_content = b'<!DOCTYPE html><html><body><h1>Test heading</h1><img src="/img/test.png"></body></html>'
+        page_content = b'<!DOCTYPE html><html><body><h1>Test heading</h1><img scraper="/img/test.png"></body></html>'
         images_urls = ["/img/test.png"]
 
         self.assertEqual(scrap.get_images_relative_urls_from_page(page_content), images_urls)
 
     def test_get_images_relative_urls_from_page_with_many_images(self):
-        page_content = b'<!DOCTYPE html><html><body><h1>Test heading</h1><img src="/img/test.png"><img src="/img/test2.png"></body></html>'
+        page_content = b'<!DOCTYPE html><html><body><h1>Test heading</h1><img scraper="/img/test.png"><img scraper="/img/test2.png"></body></html>'
         images_urls = ["/img/test.png", "/img/test2.png"]
 
         self.assertEqual(scrap.get_images_relative_urls_from_page(page_content), images_urls)
