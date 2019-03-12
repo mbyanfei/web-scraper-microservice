@@ -1,0 +1,56 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=db
+    volumes:
+      - "db_data:/var/lib/postgresql/data"
+  redis:
+    image: redis
+    volumes:
+      - 'redis_data:/var/lib/redis/data'
+
+  app:
+    build:
+      context: scraper
+      dockerfile: Dockerfile.app
+    environment:
+      - FLASK_ENV=prod
+      - SECRET_KEY=Q1W2E3R4T5Y6U7I8O9
+      - SQLALCHEMY_DATABASE_URI=postgresql://admin:admin@db:5432/db
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+      - redis
+    links:
+      - db:db
+      - redis:redis
+
+  worker:
+    build:
+      context: scraper
+      dockerfile: Dockerfile.worker
+    environment:
+      - FLASK_ENV=prod
+      - SECRET_KEY=Q1W2E3R4T5Y6U7I8O9
+      - SQLALCHEMY_DATABASE_URI=postgresql://admin:admin@db:5432/db
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    entrypoint: ["celery"]
+    command: ["worker", "-A", "worker", "--loglevel=info"]
+    depends_on:
+      - db
+      - redis
+    links:
+      - db:db
+      - redis:redis
+
+volumes:
+  db_data:
+  redis_data:

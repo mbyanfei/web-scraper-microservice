@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PYTHON=python3.6
+PYTHON=python
 
 ${PYTHON} manage.py db init
 ${PYTHON} manage.py db migrate
