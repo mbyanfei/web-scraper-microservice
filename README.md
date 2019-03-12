@@ -3,9 +3,9 @@
 Simple web scraper microservice. Collect clean texts and images from web pages and store it in database.
 
 ##### DONE:
-* REST API created with Flask + Flask-RESTPlus and Swagger UI.
+* REST API created with Flask + Flask-RESTPlus and Swagger UI
 * Asynchronous tasks running with Celery + Redis
-* Data storage SQLAlchemy + PostgreSQL
+* Data storage with SQLAlchemy + PostgreSQL
 * Tests written with Unittest framework
 
 ##### TODO:
@@ -18,8 +18,8 @@ API url `http://localhost:5000/api/v1`
 
 Method | Endpoint | Params | Description |
 |---|---|---|---|
-| POST | /tasks/collect_text | \<string:url> | Delegate task to collect text from page
-| POST | /tasks/collect_images | \<string:url> | Delegate task to collect images from page
+| POST | /tasks/collect_text | \<string:url> | Create task of collecting text from page
+| POST | /tasks/collect_images | \<string:url> | Create task of collecting images from page
 | GET | /tasks/status/\<string:task_id> | - | Get status of given task
 | GET | /resources/texts | - | Get all collected texts
 | GET | /resources/texts/\<string:url> | - | Get text collected from one page
