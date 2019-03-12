@@ -1,38 +1,29 @@
+from celery.result import AsyncResult
 from flask import request
 from flask_restplus import Namespace, Resource, fields
 
-from extensions import db
-from models import PageText, PageImage
-from helpers import scraping
+from worker import celery_app
 
 tasks_api = Namespace('tasks', description='Tasks related operations.')
 
-_task = tasks_api.model('Task', {
+_task_status = tasks_api.model('TaskStatus', {
     'id': fields.String(required=True, description='The task identifier'),
     'status': fields.String(required=True, description='The task status'),
 })
 
 
-@tasks_api.route('/')
-class TaskList(Resource):
-    @tasks_api.doc('list_tasks')
-    @tasks_api.marshal_list_with(_task)
-    def get(self):
-        """List all tasks"""
-
-        raise NotImplementedError()
-
-
-@tasks_api.route('/<string:task_id>')
+@tasks_api.route('/status/<string:task_id>')
 @tasks_api.param('task_id', 'The task identifier')
 @tasks_api.response(404, 'Task not found')
-class Task(Resource):
+class TaskStatus(Resource):
     @tasks_api.doc('get_task')
-    @tasks_api.marshal_with(_task)
+    @tasks_api.marshal_with(_task_status)
     def get(self, task_id):
-        """Get a task given its identifier"""
+        """Get a task status given its identifier"""
 
-        raise NotImplementedError()
+        result = AsyncResult(task_id)
+
+        return {'id': task_id, 'status': result.state}
 
 
 @tasks_api.route('/collect_text')
@@ -40,19 +31,14 @@ class Task(Resource):
 @tasks_api.response(404, 'Task not found')
 class Task(Resource):
     @tasks_api.doc('task_collect_text')
+    @tasks_api.marshal_with(_task_status)
     def post(self):
         """Collect text content from page"""
 
-        # TODO: use task queue
         url = request.form['url']
-        page_content = scraping.get_text_content(url)
-        text = scraping.get_text_from_page(page_content)
+        task = celery_app.send_task('collect_text', args=[url])
 
-        page_text = PageText(url=url, text=text)
-        db.session.merge(page_text)
-        db.session.commit()
-
-        return url
+        return {'id': task.id}
 
 
 @tasks_api.route('/collect_images')
@@ -60,20 +46,11 @@ class Task(Resource):
 @tasks_api.response(404, 'Task not found')
 class Task(Resource):
     @tasks_api.doc('task_collect_images')
+    @tasks_api.marshal_with(_task_status)
     def post(self):
         """Collect images from page"""
 
-        # TODO: use task queue
-        page_url = request.form['url']
-        page_content = scraping.get_text_content(page_url)
-        images_relative_urls = scraping.get_images_relative_urls_from_page(page_content)
-        images_urls = scraping.get_absolute_urls(page_url, images_relative_urls)
+        url = request.form['url']
+        task = celery_app.send_task('collect_images', args=[url])
 
-        for image_url in images_urls:
-            image_data = scraping.get_bytes_content(image_url)
-
-            page_image = PageImage(url=image_url, image=image_data, page_url=page_url)
-            db.session.merge(page_image)
-            db.session.commit()
-
-        return page_url
+        return {'id': task.id}
