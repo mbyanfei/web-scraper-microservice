@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 from requests import get
 
 
-def get_page_content(url: str) -> bytes:
+def get_bytes_content(url: str) -> bytes:
     """
     Get content from page.
 
@@ -10,14 +10,36 @@ def get_page_content(url: str) -> bytes:
     :return: page content in bytes
     """
 
-    # fix given url to use HTTP requests
-    if not url.startswith('http'):
-        url = 'http://' + url
+    url = _fix_url(url)
 
     return get(url).content
 
 
-def get_text_from_page(page_content: bytes) -> str:
+def get_text_content(url: str) -> str:
+    """
+    Get text content from page.
+
+    :param url: page url
+    :return: page content in text
+    """
+
+    url = _fix_url(url)
+
+    return get(url).text
+
+
+def _fix_url(url):
+    """
+    fix given url to use HTTP requests
+    """
+
+    if not url.startswith('http'):
+        url = 'http://' + url
+
+    return url
+
+
+def get_text_from_page(page_content: str) -> str:
     """
     Get clean text (without styles, tags or javascript) from page.
 
@@ -35,7 +57,7 @@ def get_text_from_page(page_content: bytes) -> str:
     return '\n'.join(line for line in lines if line)  # remove empty lines
 
 
-def get_images_relative_urls_from_page(page_content: bytes) -> list:
+def get_images_relative_urls_from_page(page_content: str) -> list:
     """
     Get relative urls to all images from page.
 

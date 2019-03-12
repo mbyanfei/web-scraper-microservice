@@ -8,4 +8,5 @@ class Config:
     DEBUG = env.get('FLASK_ENV', 'dev') == 'dev'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+    SECRET_KEY = 'change-me-on-production'
     SQLALCHEMY_DATABASE_URI = env.get('SQLALCHEMY_DATABASE_URI') or 'sqlite:///' + os.path.join(basedir, 'app.db')

@@ -3,8 +3,8 @@ from io import BytesIO
 from flask import send_file
 from flask_restplus import Namespace, Resource, fields
 
-from model import PageText, PageImage
-from utils import pack
+from models import PageText, PageImage
+from helpers import packing
 
 resources_api = Namespace('resources', description='Get downloaded resources (text content, images)')
 
@@ -63,9 +63,9 @@ class Image(Resource):
         images = [(img.url, img.image) for img in PageImage.query.filter_by(page_url=url).all()]
 
         if images:
-            zip_file = pack.pack_files_into_archive(images)
+            zip_file = packing.pack_files_into_archive(images)
 
-            return send_file(BytesIO(zip_file), attachment_filename=f'img_{pack.fix_filename(url)}.zip',
+            return send_file(BytesIO(zip_file), attachment_filename=f'img_{packing.fix_filename(url)}.zip',
                              as_attachment=True)
 
         else:

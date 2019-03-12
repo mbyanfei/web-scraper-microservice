@@ -1,13 +1,13 @@
-from flask_migrate import Migrate, MigrateCommand
+from flask_migrate import MigrateCommand
 from flask_script import Manager
 
-from app import app
-from extensions import db
+from app import create_app
+from tests import TestCommand
 
-manager = Manager(app)
-migrate = Migrate(app, db)
+manager = Manager(create_app())
 
 manager.add_command('db', MigrateCommand)
+manager.add_command('runtests', TestCommand)
 
 if __name__ == '__main__':
     manager.run()

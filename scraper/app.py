@@ -1,7 +1,7 @@
 from flask import Flask
 
 from api import api_blueprint
-from extensions import db
+from extensions import db, migrate
 
 
 def create_app(config='config.Config'):
@@ -16,10 +16,8 @@ def create_app(config='config.Config'):
 
 def register_extensions(app):
     db.init_app(app)
+    migrate.init_app(app, db)
 
 
 def register_blueprints(app):
     app.register_blueprint(api_blueprint, url_prefix='/api/v1')
-
-
-app = create_app()

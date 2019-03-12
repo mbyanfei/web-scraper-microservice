@@ -2,8 +2,8 @@ from flask import request
 from flask_restplus import Namespace, Resource, fields
 
 from extensions import db
-from model import PageText, PageImage
-from utils import scrap
+from models import PageText, PageImage
+from helpers import scraping
 
 tasks_api = Namespace('tasks', description='Tasks related operations.')
 
@@ -45,8 +45,8 @@ class Task(Resource):
 
         # TODO: use task queue
         url = request.form['url']
-        page_content = scrap.get_page_content(url)
-        text = scrap.get_text_from_page(page_content)
+        page_content = scraping.get_text_content(url)
+        text = scraping.get_text_from_page(page_content)
 
         page_text = PageText(url=url, text=text)
         db.session.merge(page_text)
@@ -65,12 +65,12 @@ class Task(Resource):
 
         # TODO: use task queue
         page_url = request.form['url']
-        page_content = scrap.get_page_content(page_url)
-        images_relative_urls = scrap.get_images_relative_urls_from_page(page_content)
-        images_urls = scrap.get_absolute_urls(page_url, images_relative_urls)
+        page_content = scraping.get_text_content(page_url)
+        images_relative_urls = scraping.get_images_relative_urls_from_page(page_content)
+        images_urls = scraping.get_absolute_urls(page_url, images_relative_urls)
 
         for image_url in images_urls:
-            image_data = scrap.get_page_content(image_url)
+            image_data = scraping.get_bytes_content(image_url)
 
             page_image = PageImage(url=image_url, image=image_data, page_url=page_url)
             db.session.merge(page_image)
