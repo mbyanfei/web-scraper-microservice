@@ -1,7 +1,7 @@
 from io import BytesIO
 
 from flask import send_file
-from flask_restplus import Namespace, Resource, fields
+from flask_restx import Namespace, Resource, fields
 
 from models import PageText, PageImage
 from helpers import packing

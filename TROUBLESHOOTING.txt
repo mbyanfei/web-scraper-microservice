@@ -1,0 +1,18 @@
+# AttributeError: 'LocalStack' object has no attribute '__ident_func__'
+(py38) @mbyanfei ➜ /workspaces/web-scraper-microservice/scraper (master ✗) $ pip install Flask-SQLAlchemy==2.5.1
+
+
+File "/opt/conda/envs/py38/lib/python3.8/site-packages/flask_script/__init__.py", line 15, in <module>
+change    from flask._compat import text_type
+ModuleNotFoundError: No module named 'flask._compat'
+
+to 
+from ._compat import text_type
+
+Flask==2.1.2
+Flask-Migrate==2.4.0
+Flask-Script==2.0.6
+Flask-SQLAlchemy==2.3.2 -> 2.5.1
+
+
+

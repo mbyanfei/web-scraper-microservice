@@ -1,0 +1,6 @@
+# from werkzeug.routing import parse_rule
+# ImportError: cannot import name 'parse_rule' from 'werkzeug.routing' (/opt/conda/envs/py38/lib/python3.8/site-packages/werkzeug/routing/__init__.py)
+# https://stackoverflow.com/questions/73105877/importerror-cannot-import-name-parse-rule-from-werkzeug-routing
+Flask==2.1.2
+Werkzeug==2.1.2
+flask-restx

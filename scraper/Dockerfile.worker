@@ -1,4 +1,4 @@
-FROM python:3.6
+FROM python:3.8
 RUN pip install --upgrade pip
 
 ENV INSTALL_DIR /home/web-scrapper-microservice
